@@ -31,9 +31,8 @@ public class Main {
     public static void kanto(int start, int N) { // start ~ start + 3^N - 1
 
         int powNum = (int)Math.pow(3, N);
-        int end = start + powNum - 1; // N을 통해 끝 범위 계산 가능
 
-        if(start == end) return;
+        if(N == 0) return;
         
         for(int i=start + powNum/3; i<start + 2*powNum/3; i++) {
             sb.setCharAt(i, ' ');
