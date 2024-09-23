@@ -78,43 +78,9 @@ public class Main {
     public static int[] squere_index(int x, int y) {
         int[] start_coor = new int[2];
 
-        if((0 <= x && x <= 2) && (0 <= y && y <= 2)) { // 1
-            start_coor[0] = 0;
-            start_coor[1] = 0;
-        }
-        else if((0 <= x && x <= 2) && (3 <= y && y <= 5)) { // 2
-            start_coor[0] = 0;
-            start_coor[1] = 3;
-        }
-        else if((0 <= x && x <= 2) && (6 <= y && y <= 8)) { // 3
-            start_coor[0] = 0;
-            start_coor[1] = 6;
-        }
-        else if((3 <= x && x <= 5) && (0 <= y && y <= 2)) { // 4
-            start_coor[0] = 3;
-            start_coor[1] = 0;
-        }
-        else if((3 <= x && x <= 5) && (3 <= y && y <= 5)) { // 5
-            start_coor[0] = 3;
-            start_coor[1] = 3;
-        }
-        else if((3 <= x && x <= 5) && (6 <= y && y <= 8)) { // 6
-            start_coor[0] = 3;
-            start_coor[1] = 6;
-        }
-        else if((6 <= x && x <= 8) && (0 <= y && y <= 2)) { // 7
-            start_coor[0] = 6;
-            start_coor[1] = 0;
-        }
-        else if((6 <= x && x <= 8) && (3 <= y && y <= 5)) { // 8
-            start_coor[0] = 6;
-            start_coor[1] = 3;
-        }
-        else if((6 <= x && x <= 8) && (6 <= y && y <= 8)) { // 9
-            start_coor[0] = 6;
-            start_coor[1] = 6;
-        }
-         
+        start_coor[0] = (x/3) * 3;
+        start_coor[1] = (y/3) * 3;
+
         return start_coor;        
     }
     
