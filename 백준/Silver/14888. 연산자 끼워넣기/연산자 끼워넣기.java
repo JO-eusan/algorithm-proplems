@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Main {
 
-    static List<String> sequence = new ArrayList<>(); // 연산자의 순서
+    static HashSet<String> sequence = new HashSet<>(); // 연산자의 순서
     static int N;
     static String[] poss_op; // 총 사용해야 할 연산자
     static boolean[] visited_op; // 중복을 제한하기 위한 방문 처리
@@ -42,10 +42,8 @@ public class Main {
 
         /* 연산자와 피연산자를 이용하여 연산 시작 */
         List<Integer> cal_result = new ArrayList<>();
-        for(int n=0; n<sequence.size(); n++) {
-
-            // 하나의 연산자 순서에 대해서 계산하기
-            String[] ops = sequence.get(n).split(" ");
+        for(String tmp : sequence) {
+            String[] ops = tmp.split(" ");
             int result = numbers[0];
 
             for(int i=0; i<N-1; i++) {
@@ -54,8 +52,6 @@ public class Main {
 
             cal_result.add(result);
         }
-        
-
 
         /* 최대값 & 최소값 찾기 */
         Collections.sort(cal_result);
