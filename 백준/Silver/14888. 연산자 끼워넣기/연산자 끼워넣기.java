@@ -3,8 +3,9 @@ import java.util.*;
 
 public class Main {
 
-    static HashSet<String> sequence = new HashSet<>(); // 연산자의 순서
+    static List<Integer> cal_result = new ArrayList<>();
     static int N;
+    static int[] numbers;
     static String[] poss_op; // 총 사용해야 할 연산자
     static boolean[] visited_op; // 중복을 제한하기 위한 방문 처리
 
@@ -18,7 +19,7 @@ public class Main {
         visited_op = new boolean[N-1];
 
         /* 피연산자 */
-        int[] numbers = new int[N];
+        numbers = new int[N];
         String[] second_line = br.readLine().split(" ");
 
         for(int i=0; i<N; i++) {
@@ -38,20 +39,7 @@ public class Main {
             }
         }
 
-        op_sequence(0, ""); // dfs
-
-        /* 연산자와 피연산자를 이용하여 연산 시작 */
-        List<Integer> cal_result = new ArrayList<>();
-        for(String tmp : sequence) {
-            String[] ops = tmp.split(" ");
-            int result = numbers[0];
-
-            for(int i=0; i<N-1; i++) {
-                result = calculate(result, numbers[i+1], ops[i]);
-            }
-
-            cal_result.add(result);
-        }
+        op_sequence(0, numbers[0]); // dfs
 
         /* 최대값 & 최소값 찾기 */
         Collections.sort(cal_result);
@@ -63,20 +51,17 @@ public class Main {
         bw.close();
     }
 
-    public static void op_sequence(int cnt, String str) {
+    public static void op_sequence(int cnt, int num) {
 
         if(cnt == N-1) {
-            sequence.add(str);
+            cal_result.add(num);
             return;
         }
 
         for(int i=0; i<N-1; i++) {
             if(!visited_op[i]) {
                 visited_op[i] = true;
-
-                if(str.equals("")) op_sequence(cnt + 1, poss_op[i]);
-                else op_sequence(cnt + 1, str + " " + poss_op[i]);
-                
+                op_sequence(cnt + 1, calculate(num, numbers[cnt + 1], poss_op[i]));
                 visited_op[i] = false;
             }
         }
