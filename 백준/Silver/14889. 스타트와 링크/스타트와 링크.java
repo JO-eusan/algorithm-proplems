@@ -1,12 +1,11 @@
 import java.io.*;
-import java.util.*;
 
 public class Main {
 
     static int N;
+    static int min = Integer.MAX_VALUE;
     static int[][] S;
     static boolean[] visited;
-    static List<String> results = new ArrayList<>(); // 최종 순열 결과 저장
 
     
     public static void main(String[] args) throws IOException {
@@ -29,27 +28,7 @@ public class Main {
             }
         }
 
-        pick_player(0, 0, "");
-
-        // 최소값 계산
-        int min = Integer.MAX_VALUE;
-        for(int n=0; n<results.size(); n++) {
-            HashSet<String> one_team = new HashSet<>(Arrays.asList(results.get(n).split(" ")));
-
-            int team_1 = 0;
-            int team_2 = 0;
-
-            for(int i=0; i<N; i++) {
-                for(int j=i+1; j<N; j++) {
-                    if(one_team.contains(String.valueOf(i)) && one_team.contains(String.valueOf(j)))
-                        team_1 += S[i][j];
-                    else if(!one_team.contains(String.valueOf(i)) && !one_team.contains(String.valueOf(j)))
-                        team_2 += S[i][j];
-                }
-            }
-
-            min = Math.min(min, Math.abs(team_1 - team_2));
-        }
+        pick_player(0, 0);
 
         bw.write(min + "");
 
@@ -57,20 +36,30 @@ public class Main {
         bw.close();
     }
 
-    public static void pick_player(int cnt, int prev, String result) {
+    public static void pick_player(int cnt, int prev) {
 
         if(cnt == N/2) {
-            results.add(result);
+            // 최소값 계산
+            int team_1 = 0;
+            int team_2 = 0;
+
+            for(int i=0; i<N; i++) {
+                for(int j=i+1; j<N; j++) {
+                    if(visited[i] && visited[j])
+                        team_1 += S[i][j];
+                    else if(!visited[i] && !visited[j])
+                        team_2 += S[i][j];
+                }
+            }
+
+            min = Math.min(min, Math.abs(team_1 - team_2));
             return;
         }
 
         for(int i=prev; i<N; i++) {
             if(!visited[i]) {
                 visited[i] = true;
-
-                if(result.equals("")) pick_player(cnt + 1, i, String.valueOf(i));
-                else pick_player(cnt + 1, i, result + " " + String.valueOf(i));
-
+                pick_player(cnt + 1, i);
                 visited[i] = false;
             }
         }
