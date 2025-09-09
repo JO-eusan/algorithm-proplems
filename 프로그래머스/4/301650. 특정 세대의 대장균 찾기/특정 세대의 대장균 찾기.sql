@@ -1,0 +1,13 @@
+SELECT e_except_null.ID
+FROM (
+    SELECT * 
+    FROM ECOLI_DATA 
+    WHERE PARENT_ID IS NOT NULL
+) e_except_null 
+INNER JOIN ECOLI_DATA e
+ON e_except_null.PARENT_ID = e.ID
+WHERE e.PARENT_ID IN (
+    SELECT ID 
+    FROM ECOLI_DATA 
+    WHERE PARENT_ID IS NULL
+)
