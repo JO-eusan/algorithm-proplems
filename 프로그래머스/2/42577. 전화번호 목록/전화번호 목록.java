@@ -2,20 +2,20 @@ import java.util.*;
 
 class Solution {
     public boolean solution(String[] phone_book) {
-        boolean answer = true;
-        
-        HashSet<String> set = new HashSet<>();
-        for(int i=0; i<phone_book.length; i++)
-            set.add(phone_book[i]);
-        
-        /* search */
-        for(int i=0; i<phone_book.length; i++) {
-            for(int j=0; j<phone_book[i].length(); j++) {
-                if(set.contains(phone_book[i].substring(0, j)))
-                    answer = false;
-            }
+        // 1. 조회에 시간 복잡도가 O(1)를 가지기 위해 중복되지 않은 전화번호를 Set에 저장한다.
+        Set<String> phoneNumbers = new HashSet<>();
+        for (String p : phone_book) {
+            phoneNumbers.add(p);
         }
         
-        return answer;
+        // 2. 하나씩 순회하면서 부분 문자열에 해당하는 전화번호가 있는지 확인한다.
+        for (String p : phoneNumbers) {
+            for (int i = 0; i < p.length(); i++) {
+                if (phoneNumbers.contains(p.substring(0, i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
