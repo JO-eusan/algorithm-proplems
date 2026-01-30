@@ -2,35 +2,30 @@ import java.util.*;
 
 class Solution {
     public String solution(String[] participant, String[] completion) {
+        // 1. participant에 대해 이름별 참여자 횟수를 만듭니다.
+        Map<String, Integer> people = new HashMap<>();
+        for (String p : participant) {
+            Integer countValue = people.putIfAbsent(p, 1);
+            if (countValue != null) {
+                people.put(p, countValue + 1);
+            }
+        }
         
+        // 2. completion을 O(n)으로 순회하면서 참여자 명단에서 제외합니다.
+        for (String c : completion) {
+            Integer countValue = people.putIfAbsent(c, 0);
+            if (countValue != null) {
+                people.put(c, countValue - 1);
+            }
+        }
+        
+        // 3. participant에 유일하게 남아있는 이름(key)를 출력합니다.
         String answer = "";
-        
-        /* contains() 메서드 사용을 위해 HashMap으로 변환 */
-        HashMap<String, Integer> comp = new HashMap<>();
-        for(int i=0; i<completion.length; i++) {
-            if(!comp.containsKey(completion[i]))
-               comp.put(completion[i], 1);
-            else
-               comp.put(completion[i], comp.get(completion[i]) + 1);
-        }
-        
-        for(int i=0; i<participant.length; i++) {
-            if(!comp.containsKey(participant[i]))
-            {
-                answer = participant[i];
-                break;
-            }
-            else if(comp.containsKey(participant[i]) && comp.get(participant[i]) == 0)
-            {
-                answer = participant[i];
-                break;
-            }
-            else 
-            {
-                comp.put(participant[i], comp.get(participant[i]) - 1);
+        for (String k : people.keySet()) {
+            if (people.get(k) != 0) {
+                answer = k;
             }
         }
-        
         return answer;
     }
 }
