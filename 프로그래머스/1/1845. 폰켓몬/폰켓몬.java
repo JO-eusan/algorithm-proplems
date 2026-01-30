@@ -2,23 +2,21 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] nums) {
-        int answer = 0;
-        HashMap<Integer, Integer> count = new HashMap<>();
+        int ponketmonSize = nums.length;
+        int pickedSize = ponketmonSize / 2;
         
-        /* 종류 count */
-        for(int i=0; i<nums.length; i++) {
-            if(!count.containsKey(nums[i]))
-                count.put(nums[i], 1);
-            else
-                count.put(nums[i], count.get(nums[i])+1);
+        // 1. 폰켓몬의 종류를 계산한다.
+        Set<Integer> category = new HashSet<>();
+        for(int n : nums) {
+            category.add(n);
         }
         
-        /* N/2마리 선택 */
-        if(nums.length/2 >= count.size()) 
-            answer = count.size();
-        else
-            answer = nums.length/2;
-        
-        return answer;
+        // 2. 만약 선택할 개수보다 종류의 개수가 많다면 선택할 개수가 답이고
+        // 3. 만약 선택할 개수가 종류의 개수보다 적다면 종류의 개수가 답이다.
+        if (pickedSize <= category.size()) {
+            return pickedSize;
+        } else {
+            return category.size();
+        }
     }
 }
