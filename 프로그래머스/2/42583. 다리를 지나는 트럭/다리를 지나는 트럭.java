@@ -2,41 +2,36 @@ import java.util.*;
 
 class Solution {
     public int solution(int bridge_length, int weight, int[] truck_weights) {
-        int answer = 0;
+        Queue<Integer> bridge = new LinkedList<>();
         
-        int count_truck = 0;
-        int weight_sum = 0; // 현재 다리 위의 트럭의 총 무게
-        int truck_idx = 0; // 현재 트럭
-        
-        Queue<Integer> q = new LinkedList<>();
-        
-        while(count_truck != truck_weights.length) { // 모든 차가 나올 때까지 반복
-            
-            answer++; // 1초 증가
-            
-            /* 트럭 탈출 */
-            if(q.size() == bridge_length) {
-                int tmp = q.poll();
-                weight_sum -= tmp;
-                if(tmp != 0) count_truck++;
-            }
-            
-            /* 트럭 투입 */
-            if((truck_idx < truck_weights.length) 
-               && (truck_weights[truck_idx] + weight_sum <= weight)) {
-                q.offer(truck_weights[truck_idx]);
-                weight_sum += truck_weights[truck_idx];
-                truck_idx++;
-            }
-            else q.offer(0);
-            
-            
-            
-            
+        // 1. 다리를 0으로 초기화
+        for (int i = 0; i < bridge_length; i++) {
+            bridge.offer(0);
         }
         
+        int time = 0;
+        int currentWeight = 0;
+        int truckIndex = 0;
         
+        // 2. 아직 다리를 건너지 못한 트럭이 있으면 계속
+        while (truckIndex < truck_weights.length) {
+            time++;
+            
+            // 3. 1초 결과하면 맨 앞 트럭이 내려감
+            currentWeight -= bridge.poll();
+            
+            // 4. 다음 트럭이 올라갈 수 있으면 해당 weight 넣고
+            if (currentWeight + truck_weights[truckIndex] <= weight) {
+                bridge.offer(truck_weights[truckIndex]);
+                currentWeight += truck_weights[truckIndex];
+                truckIndex++;
+            } else {
+                // 5. 못 올라간다면 빈 처리
+                bridge.offer(0);
+            }
+        }
         
-        return answer;
+        // 6. 마지막 트럭이 올라간 뒤에 다리의 길이만큼 시간 더 필요
+        return time + bridge_length;
     }
 }
