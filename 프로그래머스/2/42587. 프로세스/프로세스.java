@@ -2,28 +2,34 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] priorities, int location) {
-        int answer = 0;
+        Queue<int[]> queue = new LinkedList<>();
         
-        // 우선순위 큐를 내림차순 정렬로 설정
-        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
-
-        for (int i = 0; i < priorities.length; i++) 
-            pq.add(priorities[i]);
+        for (int i = 0; i < priorities.length; i++) {
+            queue.offer(new int[] {priorities[i], i});
+        }
         
-        // 우선순위 큐에 대한 순서대로 location 앞에 꺼내지는 요소 세기
-        while (!pq.isEmpty()) {
-            for (int i = 0; i < priorities.length; i++) {
-                if (priorities[i] == pq.peek()) { 
-                    if (i == location) {
-                        answer++;
-                        return answer;
-                    }   
-                    pq.poll();
-                    answer++;
+        int order = 0;
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            boolean hasHigherPriority = false;
+            for (int[] q : queue) {
+                if (q[0] > current[0]) {
+                    hasHigherPriority = true;
+                    break;
+                }
+            }
+            
+            if (hasHigherPriority) {
+                // 다시 뒤로 보냄
+                queue.offer(current);
+            } else {
+                // 실행
+                order++;
+                if (current[1] == location) {
+                    return order;
                 }
             }
         }
-        
-        return answer;
+        return -1;
     }
 }
