@@ -2,46 +2,31 @@ import java.util.*;
 
 class Solution {
     public int[] solution(String[] operations) {
-        int[] answer = new int[2]; // [최댓값, 최솟값]
+        // 1. 최대 & 최소 정렬 큐 2개를 관리한다.
+        PriorityQueue<Integer> maxQueue = new PriorityQueue<>(Collections.reverseOrder());
+        PriorityQueue<Integer> minQueue = new PriorityQueue<>();
         
-        PriorityQueue<Integer> minHeap = new PriorityQueue<>(); // 최소값을 위한 힙
-        PriorityQueue<Integer> maxHeap 
-            = new PriorityQueue<>(Collections.reverseOrder()); //최대값을 위한 힙
-        
-        int count_add = 0;
-        int count_delete = 0;
-        
-        for(int i=0; i<operations.length; i++) {
-            String[] tmp = operations[i].split(" ");
+        // 2. operations을 순회하면서 작업을 수행한다.
+        for (String op : operations) {
+            String[] tokens = op.split(" ");
             
-            if(tmp[0].equals("I")) {
-                minHeap.offer(Integer.parseInt(tmp[1]));
-                maxHeap.offer(Integer.parseInt(tmp[1]));
-                count_add++;
-            }
-            else if(tmp[0].equals("D")) {
-                if(minHeap.size() > 0) {
-                    if(tmp[1].equals("1")) {
-                        // 최대값 삭제
-                        int max = maxHeap.poll();
-                        minHeap.remove(max);
-                    }
-                    else { //-1
-                        // 최소값 삭제
-                        int min = minHeap.poll();
-                        maxHeap.remove(min);
-                    }
-                    count_delete++;
-                }
+            if (tokens[0].equals("I")) {
+                maxQueue.offer(Integer.parseInt(tokens[1]));
+                minQueue.offer(Integer.parseInt(tokens[1]));
+            } else if (Integer.parseInt(tokens[1]) == 1) {
+                minQueue.remove(maxQueue.poll());
+            } else if (Integer.parseInt(tokens[1]) == -1) {
+                maxQueue.remove(minQueue.poll());
             }
         }
         
-        if(count_add - count_delete > 0) {
-            answer[0] = maxHeap.poll();
-            answer[1] = minHeap.poll();
-        }
-        
-        
-        return answer;
+        // 3. Queue에 남아있는 원소의 개수에 따라 결과 값을 반환한다.
+        if (maxQueue.size() == 0) {
+            return new int[] {0, 0};
+        } else if (maxQueue.size() == 1) {
+            int num = maxQueue.poll();
+            return new int[] {num, num};
+        } 
+        return new int[] {maxQueue.poll(), minQueue.poll()};
     }
 }
