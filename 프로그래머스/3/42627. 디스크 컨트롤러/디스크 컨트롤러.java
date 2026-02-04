@@ -2,38 +2,50 @@ import java.util.*;
 
 class Solution {
     public int solution(int[][] jobs) {
-        int answer = 0;
-        
-        // 요청 시점이 빠른 순서대로 정렬
-        Arrays.sort(jobs, (o1, o2) -> o1[0] - o2[0]);
-        
-        // 작업 소요 시간을 기준으로 minHeap 
-        PriorityQueue<int[]> minHeap = new PriorityQueue<>((o1, o2) -> (o1[1]-o2[1]));
-        
-        int sec = 0; // 현재 시점 count
-        int idx = 0; // 현재 확인 idx
-        int count = 0; // 수행 완료 요청 개수 -> job.length 일때 끝
-        
-        /* count */
-        while(count < jobs.length) {
-            // 배열의 idx의 요소의 시작 시점이 현재 시작 시점보다 작은 요소 put
-            while(idx < jobs.length && jobs[idx][0] <= sec)
-                minHeap.offer(jobs[idx++]);
-                
-            if(minHeap.isEmpty()) {
-                // 초를 가장 빠르게 넣어야 하는 요소의 요청되는 시점으로 이동
-                sec = jobs[idx][0];
+        // 1. 요청 시각으로 정렬된 처리되지 않은 작업을 저장할 공간을 지정한다.
+        PriorityQueue<Integer> tasks = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return jobs[o1][0] - jobs[o2][0];
             }
-            else {
-                int[] tmp = minHeap.poll();
-                answer += tmp[1] + sec - tmp[0];
-                sec += tmp[1];
-                count++;
+        });
+        
+        // 2. 현재 작업의 번호를 처리되지 않은 작업 큐에 저장한다.
+        for (int i=0; i<jobs.length; i++) {
+            tasks.offer(i);
+        }
+        
+        // 3. time을 갱신하면서 그 시점에 작업이 가능한 대기 큐를 구성하고 우선순위가 가장 높은 작업을 처리한다.
+        PriorityQueue<Integer> availableTasks = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                if (jobs[o1][1] != jobs[o2][1]) {
+                    return jobs[o1][1] - jobs[o2][1];
+                }
+                if (jobs[o1][0] != jobs[o1][0]) {
+                    return jobs[o1][0] - jobs[o2][1];
+                }
+                return o1 - o2;
+            }
+        });
+        int time = 0;
+        int totalReturnTime = 0;
+        
+        while (tasks.size() != 0 || availableTasks.size() != 0) {
+            while (!tasks.isEmpty() && jobs[tasks.peek()][0] <= time) {
+                availableTasks.offer(tasks.poll());
+            }
+            
+            if (!availableTasks.isEmpty()) {
+                int process = availableTasks.poll();
+                time += jobs[process][1];
+                totalReturnTime += (time - jobs[process][0]);
+            } else if (!tasks.isEmpty()) {
+                time = jobs[tasks.peek()][0];
             }
         }
         
-        answer /= jobs.length;
-        
-        return answer;
+        // 4. 모든 요청 작업의 반환 시간을 계산한다.
+        return totalReturnTime / jobs.length;
     }
 }
