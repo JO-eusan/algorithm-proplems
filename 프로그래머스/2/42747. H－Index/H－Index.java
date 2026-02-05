@@ -2,28 +2,32 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] citations) {
-        int answer = 0;
-        
-        Integer[] wrapper_arr = new Integer[citations.length];
-        for(int i=0; i<citations.length; i++)
-            wrapper_arr[i] = citations[i];
-        
-        Arrays.sort(wrapper_arr, Collections.reverseOrder());
-        
-        int h = 10000;
-        for(; h>=0; h--) {
-
-            /* 기준 이상 논문 수 세기 */
-            int paper_over_k = 0;
-            for(int j=0; j<citations.length; j++) {
-                if(wrapper_arr[j] >= h) paper_over_k++;
-            }
-            
-            if(paper_over_k >= h) break;
+        // 1. 내림차순 정렬을 위해 Collections을 사용한다.
+        List<Integer> numbers = new ArrayList<>();
+        for(int c : citations) {
+            numbers.add(c);
         }
         
-        answer = h;
+        // 2. 가장 큰 인용 수 부터 h 조건에 대한 탐색을 수행한다.
+        Collections.sort(numbers, Collections.reverseOrder());
+        int h = numbers.get(0);
         
-        return answer;
+        while (true) {
+            int count = 0;
+            
+            for(int n : numbers) {
+                if(n < h) {
+                    break;
+                }     
+                count++;
+            }
+            
+            if (count >= h) {
+                break;
+            }
+            h--;
+        }
+        
+        return h;
     }
 }
