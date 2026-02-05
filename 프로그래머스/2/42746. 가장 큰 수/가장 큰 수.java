@@ -2,22 +2,18 @@ import java.util.*;
 
 class Solution {
     public String solution(int[] numbers) {
-        String answer = "";
-        
-        String[] strArr = new String[numbers.length];
-        for(int i=0; i<numbers.length; i++)
-            strArr[i] = String.valueOf(numbers[i]);
-        
-        Arrays.sort(strArr, (o1, o2) -> (o2 + o1).compareTo(o1 + o2));
-        
-        if (strArr[0].equals("0")) {
-            answer += "0";
+        // 1. numbers의 숫자를 String으로 모은다.
+        List<String> singleNumbers = new ArrayList<>();
+        for(int n : numbers) {
+            singleNumbers.add(String.valueOf(n));
         }
-        else {
-            for(int i=0; i<strArr.length; i++)
-                answer += strArr[i];
+        
+        // 2. 모은 String을 내림차순으로 정렬하면 큰 수가 앞에 오면서 큰 수가 된다.
+        Collections.sort(singleNumbers, (o1, o2) -> (o2 + o1).compareTo(o1 + o2));
+        
+        if (singleNumbers.get(0).equals("0")) {
+            return "0";
         }
-    
-        return answer;
+        return String.join("", singleNumbers);
     }
 }
