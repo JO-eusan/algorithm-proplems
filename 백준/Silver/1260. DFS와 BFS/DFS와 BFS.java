@@ -20,25 +20,16 @@ public class Main {
 
     private static void bfs(int v) {
         Queue<Integer> q = new LinkedList<>();
-
-        for(int i=1; i<matrix.length; i++) {
-            if (matrix[v][i]) {
-                q.offer(i);
-            }
-        }
-
-        System.out.print(v + " ");
         visited[v] = true;
+        q.offer(v);
 
         while (!q.isEmpty()) {
             int vertex = q.poll();
-            if (!visited[vertex]) {
-                visited[vertex] = true;
-                System.out.print(vertex + " ");
-            }
+            System.out.print(vertex + " ");
 
             for(int i=1; i<matrix.length; i++) {
                 if (matrix[vertex][i] && !visited[i]) {
+                    visited[i] = true;
                     q.offer(i);
                 }
             }
