@@ -1,49 +1,48 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
+import java.io.*;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        String[] tokens = br.readLine().split(" ");
-        int N = Integer.parseInt(tokens[0]);
-        int K = Integer.parseInt(tokens[1]);
+        int N = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
 
-        int MAX = 100000;
-        int[] dist = new int[MAX + 1];
-        boolean[] visited = new boolean[MAX + 1];
+        int duration = bfs(N, K);
+        System.out.println(duration);
+    }
 
-        Queue<Integer> queue = new LinkedList<>();
-        /* 현재 위치 등록 */
-        queue.add(N); 
+    public static int bfs(int N, int K) {
+        boolean[] visited = new boolean[100001];
+        Queue<Integer> q = new LinkedList<>();
+
+        q.offer(N);
         visited[N] = true;
-        dist[N] = 0;
 
-        while (!queue.isEmpty()) {
-            int x = queue.poll();
-            
-            if (x == K) {
-                System.out.println(dist[x]);
-                return;
-            }
+        int time = 0;
 
-            int[] candidates = {x + 1, x - 1, x * 2};
-            for(int candidate : candidates) {
-                if (candidate < 0 || candidate > MAX) {
-                    continue;
-                }
-                if (visited[candidate]) {
-                    continue;
+        while (!q.isEmpty()) {
+            int size = q.size();
+
+            for(int i=0; i<size; i++) {
+                int X = q.poll();
+
+                if (X == K) {
+                    return time;
                 }
 
-                visited[candidate] = true;
-                dist[candidate] = dist[x] + 1;
-                queue.add(candidate);
+                int[] nexts = {X + 1, X - 1, 2 * X};
+                for (int next : nexts) {
+                    if (0 <= next && next <= 100000 && !visited[next]) {
+                        visited[next] = true;
+                        q.offer(next);
+                    }
+                }
             }
+            time++;
         }
+        return -1;
     }
 }
