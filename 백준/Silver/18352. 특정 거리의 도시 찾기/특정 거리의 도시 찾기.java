@@ -57,23 +57,18 @@ public class Main {
         Queue<Integer> q = new LinkedList<>();
         q.offer(X);
         visited[X] = true;
+        dist[X] = 0;
 
-        int count = 0;
         while (!q.isEmpty()) {
-            int currentSize = q.size();
+            int now = q.poll();
 
-            for(int i=0; i<currentSize; i++) {
-                int now = q.poll();
-                dist[now] = count;
-
-                for(int next : roads[now]) {
-                    if (!visited[next]) {
-                        q.offer(next);
-                        visited[next] = true;
-                    }
+            for(int next : roads[now]) {
+                if (!visited[next]) {
+                    q.offer(next);
+                    visited[next] = true;
+                    dist[next] = dist[now] + 1;
                 }
             }
-            count++;
         }
     }
 }
