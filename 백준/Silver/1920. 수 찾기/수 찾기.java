@@ -1,46 +1,46 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
+
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    public static int[] numberN;
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
 
         int N = Integer.parseInt(br.readLine());
-        numberN = new int[N];
+        int[] numbers = new int[N];
 
-        String[] tmps = br.readLine().split(" ");
+        st = new StringTokenizer(br.readLine());
         for(int i=0; i<N; i++) {
-            numberN[i] = Integer.parseInt(tmps[i]);
+            numbers[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(numberN);
+        Arrays.sort(numbers);
 
         int M = Integer.parseInt(br.readLine());
-        for(String tmp : br.readLine().split(" ")) {
-            int numberM = Integer.parseInt(tmp);
+        st = new StringTokenizer(br.readLine());
 
-            System.out.println(searchNumber(0, N - 1, numberM));
+        for(int i=0; i<M; i++) {
+            int target = Integer.parseInt(st.nextToken());
+            System.out.println(search(numbers, target));
         }
     }
 
-    public static int searchNumber(int start, int end, int target) {
-        if (start > end) {
-            return 0;
-        }
+    public static int search(int[] numbers, int target) {
+        int left = 0;
+        int right = numbers.length - 1;
 
-        int pivot = (start + end) / 2;
-
-        if (numberN[pivot] == target) {
-            return 1;
-        } else if (numberN[pivot] < target) {
-            return searchNumber(pivot + 1, end, target);
-        } else {
-            return searchNumber(start, pivot - 1, target);
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (numbers[mid] == target) {
+                return 1;
+            } else if (numbers[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
         }
+        return 0;
     }
 }
