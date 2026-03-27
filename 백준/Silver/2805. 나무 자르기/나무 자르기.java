@@ -1,53 +1,50 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
+
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    public static int[] numbers;
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        String[] firstLine = br.readLine().split(" ");
-        int N = Integer.parseInt(firstLine[0]);
-        int M = Integer.parseInt(firstLine[1]);
-        
-        numbers = new int[N];
-        String[] secondLine = br.readLine().split(" ");
+        int N = Integer.parseInt(st.nextToken());
+        long M = Integer.parseInt(st.nextToken());
 
+        st = new StringTokenizer(br.readLine());
+        long[] numbers = new long[N];
         for(int i=0; i<N; i++) {
-            numbers[i] = Integer.parseInt(secondLine[i]);
+            numbers[i] = Integer.parseInt(st.nextToken());
         }
 
         Arrays.sort(numbers);
-        int min = 0;
-        int max = numbers[N - 1];
-
-        long maxLength = searchNumber(min, max - 1, M);
-
-        System.out.println(maxLength);
+        System.out.println(binarySearch(numbers, M));
     }
 
-    public static long searchNumber(long start, long end, int target) {
-        long pivot = (start + end) / 2;
-        long availableTree = calculateAvailableLength(pivot);
+    public static long binarySearch(long[] nums, long target) {
+        long left = 1;
+        long right = nums[nums.length - 1];
+        long height = 0;
 
-        if(availableTree == target || start > end) {
-            return pivot;
-        } else if (availableTree > target) {
-            return searchNumber(pivot + 1, end, target);
-        } else { // availableTree < target
-            return searchNumber(start, pivot - 1, target);
+        while (left <= right) {
+            long mid = (left + right) / 2;
+            long availableTree = calculateAvailableTree(nums, mid);
+
+            if (availableTree >= target) {
+                height = mid;
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
         }
+        return height;
     }
 
-    private static long calculateAvailableLength(long pivot) {
+    public static long calculateAvailableTree(long[] nums, long height) {
         long availableTree = 0;
 
-        for(int i=0; i<numbers.length; i++) {
-            availableTree += (Math.max(0, numbers[i] - pivot));
+        for(long n : nums) {
+            availableTree += Math.max(0, n - height);
         }
         return availableTree;
     }
