@@ -1,32 +1,29 @@
+
+import java.io.*;
 import java.util.*;
 
-class Main 
-{
-    public static void main(String[] args) 
-    {
-        Scanner scanner = new Scanner(System.in);
+public class Main {
 
-        int N = scanner.nextInt();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        int N = Integer.parseInt(br.readLine());
 
-        int minCount = N;
-        for(int i=0; i<=N; i+=5)
-        {
-            for(int j=0; j<=N; j+=3)
-            {
-                if(i + j == N)
-                {
-                    int count = i/5 + j/3;
-                    if(minCount > count)
-                        minCount = count;
-                }
+        int bag5kg = N / 5;
+
+        while (bag5kg != 0) {
+            if ((N - 5 * bag5kg) % 3 == 0) {
+                break;
+            } else {
+                bag5kg--;
             }
         }
 
-        if(minCount == N)
-            System.out.print(-1);
-        else
-            System.out.print(minCount);
-        
-        scanner.close();
-    }    
+        int need = N - 5 * bag5kg;
+        if (need % 3 == 0) {
+            System.out.println(bag5kg + need / 3);
+        } else {
+            System.out.println(-1);
+        }
+    }
 }
