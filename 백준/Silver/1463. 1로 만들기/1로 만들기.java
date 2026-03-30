@@ -1,41 +1,31 @@
+
 import java.io.*;
+import java.util.*;
 
 public class Main {
-    
+
     public static void main(String[] args) throws IOException {
-
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-
+        
         int N = Integer.parseInt(br.readLine());
+        int[] dp = new int[Math.max(4, N+1)];
 
-        int[] dp = new int[N+1];
+        dp[1] = 0;
+        dp[2] = dp[3] = 1;
 
-        if(N == 2) dp[2] = 1; 
-        else if(N > 2) {
-            dp[2] = 1; // 2 / 2 = 1
-            dp[3] = 1; // 3 / 3 = 1
+        for(int i=4; i<=N; i++) {
+            int minCount = dp[i-1];
 
-            for(int i=4; i<=N; i++) {
-
-                int min = Integer.MAX_VALUE;
-    
-                for(int j=3; j>0; j--) {
-                    if(j != 1 && i % j == 0) {
-                        min = Math.min(min, 1 + dp[i/j]);
-                        dp[i] = min;
-                    }
-                    else if(j == 1) {
-                        min = Math.min(min, 1 + dp[i-1]);
-                        dp[i] = min;
-                    }
-                }
+            if (i % 3 == 0) {
+                minCount = Math.min(dp[i/3], minCount);
             }
+            if (i % 2 == 0) {
+                minCount = Math.min(dp[i/2], minCount);
+            }
+
+            dp[i] = minCount + 1;
         }
 
-        bw.write(String.valueOf(dp[N]));
-
-        bw.flush();
-        bw.close();
+        System.out.println(dp[N]);
     }
 }
