@@ -1,33 +1,33 @@
+
 import java.io.*;
+import java.util.*;
 
 public class Main {
-    
-    public static void main(String[] args) throws IOException {
 
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int N = Integer.parseInt(br.readLine());
-        int[] numbers = new int[N+1];
-        
-        for(int i=1; i<=N; i++) {
-            numbers[i] = Integer.parseInt(br.readLine());
-        }
 
+        int[] nums = new int[N+1];
         int[] dp = new int[N+1];
-        dp[1] = numbers[1];
-        
-        if(N>=2) {
-            dp[2] = numbers[1] + numbers[2];
+
+        for(int i=1; i<=N; i++) {
+            nums[i] = Integer.parseInt(br.readLine());
         }
 
-        for(int i=3; i<=N; i++) {
-            dp[i] = Math.max(dp[i-2], dp[i-3] + numbers[i-1]) + numbers[i];
+        dp[1] = nums[1];
+        if (N >= 2) {
+            dp[2] = nums[1] + nums[2];
         }
 
-        bw.write(String.valueOf(dp[N]));
+        for (int i = 3; i <= N; i++) {
+            dp[i] = Math.max(
+                dp[i-2] + nums[i],
+                dp[i-3] + nums[i-1] + nums[i]
+            );
+        }
 
-        bw.flush();
-        bw.close();
+        System.out.println(dp[N]);
     }
 }
