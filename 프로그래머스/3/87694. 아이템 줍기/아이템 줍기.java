@@ -1,64 +1,69 @@
 import java.util.*;
 
 class Solution {
-    // 이동 방향 (상, 하, 좌, 우)
-    private static final int[] dx = {-1, 1, 0, 0};
-    private static final int[] dy = {0, 0, -1, 1};
+    
+    private int[] dx = {1, -1, 0, 0};
+    private int[] dy = {0, 0, 1, -1};
     
     public int solution(int[][] rectangle, int characterX, int characterY, int itemX, int itemY) {
-        // 좌표 확대 (2배)
-        int[][] map = new int[102][102];
+        // 테두리 그리기
+        int[][] board = new int[102][102];
         
-        for (int[] rec : rectangle) {
-            int x1 = rec[0] * 2;
-            int y1 = rec[1] * 2;
-            int x2 = rec[2] * 2;
-            int y2 = rec[3] * 2;
+        for(int[] r : rectangle) {
+            int x1 = r[0] * 2;
+            int y1 = r[1] * 2;
+            int x2 = r[2] * 2;
+            int y2 = r[3] * 2;
             
-            // 직사각형 테두리 부분을 1로 표시
-            for (int i = x1; i <= x2; i++) {
-                for (int j = y1; j <= y2; j++) {
-                    if (i == x1 || i == x2 || j == y1 || j == y2) {
-                        if (map[i][j] == 0) {
-                            map[i][j] = 1;
+            for(int i=y1; i<=y2; i++) {
+                for(int j=x1; j<=x2; j++) {
+                    if(i==y1 || i==y2 || j==x1 || j==x2) {
+                        if(board[i][j] != 2) { // 이미 다른 사각형의 내부가 아닌 경우만 표시
+                            board[i][j] = 1;
                         }
-                    } else {
-                        map[i][j] = -1; // 내부는 -1로 표시
+                    } else { // 내부
+                        board[i][j] = 2;
                     }
                 }
             }
         }
         
-        // BFS 탐색
-        Queue<int[]> queue = new LinkedList<>();
-        boolean[][] visited = new boolean[102][102];
+        // bfs로 가장 먼저 item 위치 도달하는 거리 구하기
+        int distance = bfs(board, characterX * 2, characterY * 2, itemX * 2, itemY * 2);
+        return distance / 2;
+    }
+    
+    private int bfs(int[][] board, int characterX, int characterY, int itemX, int itemY) {
+        boolean[][] visited = new boolean[board.length][board.length];
         
-        queue.offer(new int[]{characterX * 2, characterY * 2, 0}); // 시작점
-        visited[characterX * 2][characterY * 2] = true;
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[] {characterX, characterY, 0});
+        visited[characterY][characterX] = true;
         
-        while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int x = current[0];
-            int y = current[1];
-            int distance = current[2];
+        while(!q.isEmpty()) {
+            int[] now = q.poll();
+            int x = now[0];
+            int y = now[1];
+            int d = now[2];
             
-            // 아이템 위치에 도달했을 경우
-            if (x == itemX * 2 && y == itemY * 2) {
-                return distance / 2;
+            if(x == itemX && y == itemY) {
+                return d;
             }
             
-            // 상하좌우로 이동
-            for (int i = 0; i < 4; i++) {
+            for(int i=0; i<4; i++) {
                 int nx = x + dx[i];
                 int ny = y + dy[i];
                 
-                if (nx >= 0 && nx < 102 && ny >= 0 && ny < 102 && !visited[nx][ny] && map[nx][ny] == 1) {
-                    visited[nx][ny] = true;
-                    queue.offer(new int[]{nx, ny, distance + 1});
+                if(nx < 0 || nx >= board.length || ny < 0 || ny >= board.length) {
+                    continue;
+                }
+                
+                if(!visited[ny][nx] && board[ny][nx] == 1) {
+                    q.offer(new int[] {nx, ny, d+1});
+                    visited[ny][nx] = true;
                 }
             }
         }
-        
-        return -1; // 경로를 찾지 못한 경우 (사실상 발생하지 않음)
+        return -1;
     }
 }
