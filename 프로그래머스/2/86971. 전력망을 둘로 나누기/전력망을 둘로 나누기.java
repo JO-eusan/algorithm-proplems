@@ -1,56 +1,52 @@
 import java.util.*;
 
 class Solution {
-    
-    boolean[][] lines;
-    
-    public int bfs(int n, int start) {
-        boolean[] visited = new boolean[n + 1];
-        Queue<Integer> q = new LinkedList<>();
-        
-        q.offer(start);
-        visited[start] = true;
-        
-        int count = 1;
-        
-        while(!q.isEmpty()) {
-            int num = q.poll();
-            
-            for(int i=1; i<=n; i++) {
-                if(lines[num][i] && !visited[i]) {
-                    visited[i] = true;
-                    q.offer(i);
-                    count++;
-                }
-            }
-        }
-        return Math.abs(count - (n - count));
-    }
-    
     public int solution(int n, int[][] wires) {
-        int answer = n;
-        lines = new boolean[n + 1][n + 1];
+        boolean[][] matrix = new boolean[n+1][n+1];
         
-        // 1. 연결된 전선을 인접 행렬에 저장합니다.
-        for(int i=0; i<wires.length; i++) {
-            lines[wires[i][0]][wires[i][1]] = true;
-            lines[wires[i][1]][wires[i][0]] = true;
+        for(int[] w : wires) {
+            int u = w[0];
+            int v = w[1];
+            
+            matrix[u][v] = true;
+            matrix[v][u] = true;
         }
         
-        // 2. 선을 하나씩 끊어보면서 순회합니다.
-        for(int i=0; i<wires.length; i++) {
-            int x = wires[i][0];
-            int y = wires[i][1];
+        // wire 하나씩 제거 후 bfs로 최소값 찾기
+        int answer = Integer.MAX_VALUE;
+        
+        for(int[] w : wires) {
+            int u = w[0];
+            int v = w[1];
             
-            lines[x][y] = false;
-            lines[y][x] = false;
+            matrix[u][v] = false;
+            matrix[v][u] = false;
             
-            answer = Math.min(answer, bfs(n, x));
+            answer = Math.min(answer, Math.abs(n - 2*bfs(matrix)));
             
-            lines[x][y] = true;
-            lines[y][x] = true;
+            matrix[u][v] = true;
+            matrix[v][u] = true;
         }
         
         return answer;
+    }
+    
+    private int bfs(boolean[][] matrix) {
+        Set<Integer> num = new HashSet<>();
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(1);
+        num.add(1);
+        
+        while(!q.isEmpty()) {
+            int now = q.poll();
+            
+            for(int i=1; i<matrix.length; i++) {
+                if(matrix[now][i] && !num.contains(i)) {
+                    q.offer(i);
+                    num.add(i);
+                }
+            }
+        }
+        return num.size();
     }
 }
