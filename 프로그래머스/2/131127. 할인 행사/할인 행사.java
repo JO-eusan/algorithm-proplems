@@ -36,7 +36,7 @@ class Solution {
         for(Integer v : bucket.values()) {
             if(v > 0) {
                 return false;
-            }
+            } 
         }
         return true;
     }
