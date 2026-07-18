@@ -2,56 +2,55 @@ import java.util.*;
 
 class Solution {
     
-    private int[] dx = {1, -1, 0, 0};
-    private int[] dy = {0, 0, 1, -1};
+    private int[] dx = {1, 0, -1, 0};
+    private int[] dy = {0, 1, 0, -1};
     
     public int solution(int[][] board) {
-        int n = board.length;
+        return dijkstra(board, board.length);
+    }
+    
+    private int dijkstra(int[][] board, int N) {
+        Queue<int[]> q = new LinkedList<>();
         
-        int[][][] dist = new int[n][n][4];
-        for(int i=0; i<n; i++) {
-            for(int j=0; j<n; j++) {
-                Arrays.fill(dist[i][j], Integer.MAX_VALUE);
+        // 방향을 위해 한 칸 이동한 2지점에서 시작 (x, y, dir)
+        q.offer(new int[] {0, 0, 0});
+        q.offer(new int[] {0, 0, 1});
+        
+        int[][][] dist = new int[N][N][2];
+        for(int i=0; i<N; i++) {
+            for(int j=0; j<N; j++) {
+                dist[i][j][0] = Integer.MAX_VALUE;
+                dist[i][j][1] = Integer.MAX_VALUE;
             }
         }
         
-        Queue<int[]> q = new LinkedList<>();
-        q.offer(new int[] {0, 0, 0});
-        q.offer(new int[] {0, 0, 2});
-        dist[0][0][0] = 0;
-        dist[0][0][2] = 0;
+        dist[0][0][0] = dist[0][0][1] = 0;
         
         while(!q.isEmpty()) {
             int[] now = q.poll();
             int x = now[0];
             int y = now[1];
-            int dir = now[2]; 
+            int d = now[2];
             
-            for(int ndir=0; ndir<4; ndir++) {
-                int nx = x + dx[ndir];
-                int ny = y + dy[ndir];
+            for(int i=0; i<4; i++) {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+                int nd = (i % 2);
                 
-                if(nx < 0 || nx >= n || ny < 0 || ny >= n || board[nx][ny] == 1) {
-                    continue;
-                }
+                if(nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
                 
-                int cost = dist[x][y][dir] + 100;
-                
-                if(dir != ndir) {
-                    cost += 500;
-                }
-                
-                if(cost < dist[nx][ny][ndir]) {
-                    dist[nx][ny][ndir] = cost;
-                    q.offer(new int[] {nx, ny, ndir});
+                if(board[nx][ny] == 0) {
+                    int cost = dist[x][y][d] + 100;
+                    if(d != nd) cost += 500;
+                    
+                    if(cost < dist[nx][ny][nd]) {
+                        q.offer(new int[] {nx, ny, nd});
+                        dist[nx][ny][nd] = cost;
+                    }
                 }
             }
         }
         
-        int answer = Integer.MAX_VALUE;
-        for(int i=0; i<4; i++) {
-            answer = Math.min(answer, dist[n-1][n-1][i]);
-        }
-        return answer;
+        return Math.min(dist[N-1][N-1][0], dist[N-1][N-1][1]);
     }
 }
