@@ -2,40 +2,60 @@ import java.util.*;
 
 class Solution {
     
-    static int[] parent;
+    private int[] parent;
     
     public int solution(int n, int[][] costs) {
-        int answer = 0;
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[2] - b[2]);
+        
+        for(int i=0; i<costs.length; i++) {
+            pq.offer(new int[] {costs[i][0], costs[i][1], costs[i][2]});
+        }
         
         parent = new int[n];
+        
+        // Union 초기화
         for(int i=0; i<n; i++) {
             parent[i] = i;
         }
         
-        Arrays.sort(costs, (o1, o2) -> o1[2] - o2[2]);
-                    
-        for(int[] cost: costs) {
-            if(getParent(cost[0]) != getParent(cost[1])) {
-                answer += cost[2];
-                merge(cost[0], cost[1]);
-            }
+        int total = 0;
+        int edgeCount = 0;
+        
+        while(!pq.isEmpty()) {
+            int[] now = pq.poll();
+            int a = now[0];
+            int b = now[1];
+            int cost = now[2];
+            
+            if(find(a) == find(b)) continue;
+            
+            union(a, b);
+            total += cost;
+            edgeCount++;
+            
+            if(edgeCount == n-1) break;
         }
         
-        return answer;
+        return total;
     }
-                    
-    public int getParent(int node) {
-        if(parent[node] == node) return node;
-        else return getParent(parent[node]);
-    }
-                    
-    public void merge(int startNode, int endNode) {
-        int startParent = getParent(startNode);
-        int endParent = getParent(endNode);
+    
+    private int find(int x) {
+        if(parent[x] == x) {
+            return x;
+        }
         
-        if(startParent > endParent) 
-            parent[startParent] = endParent;
-        else
-            parent[endParent] = startParent;
+        int root = find(parent[x]);
+        
+        parent[x] = root;
+        return root;
+    }
+    
+    private void union(int a, int b) {
+        int rootA = find(a);
+        int rootB = find(b);
+        
+        if(rootA == rootB) return;
+        
+        parent[rootB] = rootA;
     }
 }
