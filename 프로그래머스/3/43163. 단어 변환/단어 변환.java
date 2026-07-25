@@ -2,56 +2,74 @@ import java.util.*;
 
 class Solution {
     
-    int[] visited;
+    List<Integer>[] graph;
     
     public int solution(String begin, String target, String[] words) {
-        int answer = 0;
-        visited = new int[words.length];
+        // begin + words 단어들 관계를 그래프로 표현
+        String[] w = new String[words.length + 1];
         
-        bfs(begin, target, words);
-        
-        //target 최단 경로 찾기
-        for(int i=0; i<words.length; i++) {
-            if(words[i].equals(target)) {
-                if(visited[i] != 0)
-                    answer = visited[i];
-            }
+        w[0] = begin;
+        for(int i=1; i<=words.length; i++) {
+            w[i] = words[i-1];
         }
         
-        return answer;
-    }
-    
-    public void bfs(String begin, String target, String[] words) {
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(-1); //begin index = -1
+        graph = new ArrayList[w.length];
         
-        while(!queue.isEmpty()) {
-            int current_idx = queue.poll();
-            String current = "";
-            
-            if(current_idx == -1) current = begin;
-            else current = words[current_idx];
-            
-            for(int i=0; i<words.length; i++) {
-                if(visited[i] == 0 && isChange(current, words[i])) {
-                    queue.add(i);
-                    
-                    if(current_idx == -1) visited[i] = 1;
-                    else visited[i] = visited[current_idx] + 1;
+        for(int i=0; i<w.length; i++) {
+            graph[i] = new ArrayList<>();
+        }
+        
+        int wordLength = begin.length();
+        
+        for(int i=0; i<w.length; i++) {
+            for(int j=i+1; j<w.length; j++) {
+                if(calculateSameCharacter(w[i], w[j]) == wordLength - 1) {
+                    graph[i].add(j);
+                    graph[j].add(i);
                 }
             }
         }
+        
+        return bfs(target, w);
     }
     
-    public boolean isChange(String current, String word) {
-        int cnt = 0; //다른 알파벳 횟수
+    private int bfs(String target, String[] w) {
+        int wordLength = target.length();
+        boolean[] visited = new boolean[graph.length];
         
-        for(int i=0; i<word.length(); i++) {
-            if(current.charAt(i) != word.charAt(i))
-                cnt++;
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[] {0, 0}); // {node, 변환 횟수}
+        visited[0] = true;
+        
+        while(!q.isEmpty()) {
+            int[] now = q.poll();
+            int node = now[0];
+            int count = now[1];
+            
+            if(calculateSameCharacter(w[node], target) == wordLength) {
+                return count;
+            }
+            
+            for(int next : graph[node]) {
+                if(visited[next]) continue;
+                
+                q.offer(new int[] {next, count+1});
+                visited[next] = true;
+            }
         }
         
-        if(cnt == 1) return true;
-        else return false;
+        return 0;
+    }
+    
+    private int calculateSameCharacter(String w1, String w2) {
+        int count = 0;
+        
+        for(int i=0; i<w1.length(); i++) {
+            if(w1.charAt(i) == w2.charAt(i)) {
+                count++;
+            }
+        }
+        
+        return count;
     }
 }
